@@ -1,21 +1,38 @@
 "use client";
+import axios from "axios";
 import * as React from "react";
 
+export default function Sender({
+  sendEmail,
+}: {
+  sendEmail: (formData: FormData) => Promise<void>;
+}) {
+  const [email, setEmail] = React.useState("");
 
-export default function Sender({sendEmail}: {sendEmail: (formData: FormData) => Promise<void>}) {
-  const [name, setName] = React.useState("");
+  async function send() {
+    try {
+      await axios.post("/api/send", { email }).then((res) => {
+        console.log(res);
+      });
+    } catch (error) {}
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <form action={sendEmail}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setEmail("");
+        }}
+      >
         <input
-          type="text"
-          name="name"
-          placeholder="Name"
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <button
-          type="submit"
-        >
+        <button onClick={send} type="submit">
           Send
         </button>
       </form>
